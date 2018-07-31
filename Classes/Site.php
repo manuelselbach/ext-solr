@@ -28,6 +28,8 @@ use ApacheSolrForTypo3\Solr\Domain\Index\Queue\RecordMonitor\Helper\Configuratio
 use ApacheSolrForTypo3\Solr\System\Configuration\TypoScriptConfiguration;
 use ApacheSolrForTypo3\Solr\System\Records\Pages\PagesRepository;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -316,5 +318,47 @@ class Site
         }
 
         return $rootPageIds;
+    }
+
+    /**
+     * Retrieve the enabled languages for a root page
+     *
+     * @param int $rootPageId
+     *
+     * @return array
+     */
+    public function getEnabledLanguages(int $rootPageId): array
+    {
+        if (version_compare(TYPO3_version, '9.2.0', '>=')) {
+            return $this->retrieveEnabledLanguagesFromSitesConfiguration($rootPageId);
+        }
+
+        return $this->configuration->getEnabledLanguageUids();
+    }
+
+    /**
+     * Since TYPO3 9.2 the site configuration module is available where the languages for a site are configured.
+     * This will retrieve the settings from this configuration.
+     *
+     * @param int $rootPageId
+     *
+     * @return array
+     */
+    protected function retrieveEnabledLanguagesFromSitesConfiguration(int $rootPageId): array
+    {
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        $currentSite = $siteFinder->getSiteByRootPageId($rootPageId);
+        $languages = $currentSite->getLanguages();
+
+        if (!is_array($languages)) {
+            return [];
+        }
+
+        $out = array_map(function($language){
+            /** @var SiteLanguage $language */
+            return $language->getLanguageId();
+        }, $languages);
+
+        return $out;
     }
 }

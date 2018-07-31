@@ -839,4 +839,48 @@ class TypoScriptConfigurationTest extends UnitTest
         $configuration = new TypoScriptConfiguration($fakeConfigurationArray);
         $this->assertSame(['customA','customB'], $configuration->getSearchAdditionalPersistentArgumentNames(), 'Can not get configured custom parameters');
     }
+
+    public function getEnabledLanguageUidsDataProvider()
+    {
+        return [
+            [
+                'If not defined an empty array should be returned',
+                null,
+                []
+            ],
+            [
+                'If "*" is set an empty array should be returned',
+                [
+                    'enabledLanguageUids' => '*',
+                ],
+                []
+            ],
+            [
+                'Comma separated string of page UIDs should return as array',
+                [
+                    'enabledLanguageUids' => '1,6,250',
+                ],
+                [
+                    '1',
+                    '6',
+                    '250'
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider getEnabledLanguageUidsDataProvider
+     */
+    public function getEnabledLanguageUids($description, $config, $expected)
+    {
+        $fakeConfigurationArray['plugin.']['tx_solr.'] = [
+            'index.' => $config
+        ];
+
+        $configuration = new TypoScriptConfiguration($fakeConfigurationArray);
+        $this->assertSame($expected, $configuration->getEnabledLanguageUids(), $description);
+    }
 }

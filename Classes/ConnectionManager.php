@@ -316,8 +316,18 @@ class ConnectionManager implements SingletonInterface, ClearCacheActionsHookInte
         $solrConfigurations = [];
 
         $allConfigurations = $this->getAllConfigurations();
+
         foreach ($allConfigurations as $configuration) {
-            if ($configuration['rootPageUid'] == $site->getRootPageId()) {
+            $rootPageId = $site->getRootPageId();
+            if ((int) $configuration['rootPageUid'] === $rootPageId) {
+                // if enabled languages are configured and
+                // if language is not enabled, skip it!
+                $enabledLanguages = $site->getEnabledLanguages($rootPageId);
+                if (count($enabledLanguages) > 0
+                    && !in_array($configuration['language'], $enabledLanguages)
+                ) {
+                    continue;
+                }
                 $solrConfigurations[] = $configuration;
             }
         }

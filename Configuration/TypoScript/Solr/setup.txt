@@ -22,6 +22,9 @@ plugin.tx_solr {
 
 		}
 
+		// comma separated list of sys_language_uid that are enabled to be indexed
+		enabledLanguageUids =
+
 		// assigns processing instructions to Solr fields during indexing, Solr field = processing instruction
 		fieldProcessingInstructions {
 			changed = timestampToIsoDate

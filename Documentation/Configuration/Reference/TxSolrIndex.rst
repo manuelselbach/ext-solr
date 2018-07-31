@@ -26,6 +26,25 @@ to easily index pages or any kind of records of your TYPO3 CMS.
 
 Allows to prevent frontend indexing of pages when a backend editor is logged in and browsing the website.
 
+enabledLanguageUids
+-------------------
+
+:Type: String
+:TS Path: plugin.tx_solr.index.enabledLanguageUids
+:Default: *
+
+With this a list of languages could be provided that should be indexed. Simply define a comma separated list of all enabled language uids (sys_language_uid).
+
+By Default this field is set to `*`, which indicates, that all languages configured on the root page will be indexed.
+
+Since TYPO3 9.2 this option is deprecated, because the definition of language/s is/are made via the site configuration and will be retrieved for the specific site.
+
+.. code-block:: typoscript
+
+    # Limit indexing to languages with sys_language_uid 1, 4 and 5
+    plugin.tx_solr.index.enabledLanguageUids = 1,4,5
+
+
 additionalFields (deprecated)
 -----------------------------
 

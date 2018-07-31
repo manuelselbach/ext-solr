@@ -2375,4 +2375,22 @@ class TypoScriptConfiguration
 
         return $this->contentObjectService->renderSingleContentObject($value, $configuration);
     }
+
+    /**
+     * Returns language uids that are enabled via (plugin.tx_solr.index.enabledLanguageUids)
+     * or configured by Sites->Configuration since TYPO3 version 9.2
+     *
+     * plugin.tx_solr.index.enabledLanguageUids
+     *
+     * @param string $defaultIfEmpty
+     * @return array
+     */
+    public function getEnabledLanguageUids($defaultIfEmpty = '*'): array
+    {
+        $enabledUids = $this->getValueByPathOrDefaultValue('plugin.tx_solr.index.enabledLanguageUids', $defaultIfEmpty);
+        if ($enabledUids === '*') {
+            return [];
+        }
+        return GeneralUtility::trimExplode(',', $enabledUids, true);
+    }
 }
